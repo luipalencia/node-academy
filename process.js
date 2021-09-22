@@ -1,3 +1,4 @@
+
 const fs = require('fs');
 const { promisify } = require('util');
 const yup = require("yup");
@@ -5,7 +6,7 @@ const yup = require("yup");
 let schema = yup.object().shape({
     id: yup.string().length(36).required(),
     title: yup.string().max(255).required(),
-    author: yup.string().strict().required(),
+    author: yup.string().max(100).strict().required(),
     modifiedAt: yup.date().required(),
     publishedAt: yup.date(),
     url: yup.string().url().required(),
