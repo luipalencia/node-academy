@@ -4,8 +4,11 @@
   "description": "iteracion uno - leer y validar un archivo",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "process" : "node process.js",
+    "validate": "node ex.js",
+    "start": "node --inspect=0.0.0.0:9229 example.js"
+    },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/luipalencia/node-academy.git"
