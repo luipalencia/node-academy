@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "process" : "node process.js",
-    "server": "node serverlistener.js",
-    "start": "node --inspect=0.0.0.0:9229 example.js"
-    },
+    "process": "node process.js",
+    "start": "node --inspect=0.0.0.0:9229 example.js",
+    "dev": "nodemon main.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/luipalencia/node-academy.git"
@@ -26,6 +26,10 @@
   },
   "homepage": "https://github.com/luipalencia/node-academy#readme",
   "dependencies": {
+    "express": "^4.17.1",
     "yup": "^0.32.9"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.13"
   }
 }
