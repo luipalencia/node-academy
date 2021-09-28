@@ -3,7 +3,7 @@ const fs = require('fs');
 const { promisify } = require('util');
 const promisifiedAppendFile = promisify(fs.appendFile);
 
-async function asignFiles(validArray, invalidArray) {
+async function assignFiles(validArray, invalidArray) {
     try {
      if (validArray.length) {
        await promisifiedAppendFile('db.json', JSON.stringify(validArray), 'utf8');
@@ -17,4 +17,4 @@ async function asignFiles(validArray, invalidArray) {
     }
   }
 
-  module.exports = asignFiles;
+  module.exports = assignFiles;
