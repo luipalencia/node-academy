@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "process" : "node process.js",
-    "validate": "node ex.js",
+    "server": "node serverlistener.js",
     "start": "node --inspect=0.0.0.0:9229 example.js"
     },
   "repository": {

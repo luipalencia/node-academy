@@ -3,10 +3,10 @@ const {validFiles, invalidFiles} = require('./array');
 async function validateFiles(file, content) {
     try {
       if (file === true) {
-      validFiles.push(content) 
+      validFiles.push(JSON.parse(content)) 
        console.log('valid files: ' , validFiles.length)
        } else if (file === false) {
-       invalidFiles.push(content)
+       invalidFiles.push(JSON.parse(content))
          console.log('invalid files: ', invalidFiles.length);
       }}
      catch (err) {
