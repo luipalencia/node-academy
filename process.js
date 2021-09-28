@@ -3,7 +3,7 @@ const fs = require('fs');
 const { promisify } = require('util');
 const promisifiedReadDir = promisify(fs.readdir);
 const promisifiedReadFile = promisify(fs.readFile);
-const asignFiles = require('./assignFiles.js');
+const assignFiles = require('./assignFiles.js');
 const validateFiles = require('./validateFiles.js');
 const schema = require('./schema.js');
 const {validFiles, invalidFiles} = require('./array');
@@ -20,7 +20,7 @@ async function main() {
      isValid = await schema.isValid(JSON.parse(fileContent));
         await validateFiles(isValid, fileContent);
         if(files.length === index + 1) {
-        await asignFiles(validFiles, invalidFiles);
+        await assignFiles(validFiles, invalidFiles);
         }
         }
         }
