@@ -1,3 +1,4 @@
 const articlesRouter = require('./articles');
+const authorsRouter = require('./authors');
 
-module.exports = { articlesRouter}; 
+module.exports = { articlesRouter, authorsRouter }; 
