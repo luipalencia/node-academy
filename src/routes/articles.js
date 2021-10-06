@@ -1,175 +1,143 @@
 const { Router } = require('express');
 const articlesRouter = Router();
-const readFiles = require('../utils/readFiles.js');
-const writeData = require('../utils/writeFiles.js');
-const path = require('path')
-const {v4 : uuidv4 } = require('uuid');
-const date = require('date-and-time');
+const articleModel = require("../database/articles");
 const validateArticles = require('../utils/validateArticles');
-const newValues = require('../utils/newValues.js')
-
+const date = require('date-and-time');
 const now = new Date();
 
-// GET 
-  articlesRouter.get('/', async (req, res) => {
-    try {
-      const data = await readFiles(path.resolve(__dirname, '../database/db.json'));
-      res.status(200).json(data);
-
-    } catch (err) {
-      console.log(err) 
-      res.status(500).json(err);
-    }
-   })
-
-  articlesRouter.get('/:id', async (req, res) => {
-  const { id } = req.params;
-    
-  try {
-    const data = await readFiles(path.resolve(__dirname, '../database/db.json')); 
-    const founded = data.find((e) => e.id === id);
-    if(!founded) {
-      res.status(404).send('Not Found');
+// GET ✅
+   articlesRouter.get("/", async (req, res) => {
+     try {
+      const founded = await articleModel.list();
+      if(founded === null) {
+        res.status(404).send('Not found');
+        return;
+      }
+      console.log("Articles founded ", founded);
+      res.status(200).json(founded);
       return;
-  }
-    res.status(200).send(founded);
-    return;
-  }
-  catch (err) {
-    res.status(500).json(err);
-  }
-    });
 
-   // POST 
-   articlesRouter.post('/:id', async (req, res) => {
+     } catch (err) {
+      console.log("Error: ", err);
+      res.status(500).send('Internal server error');
+     }
+  });
 
-    const { url, keywords, source, readMins, author, title } = req.body;
-    const newArticle = { ...req.body, id: uuidv4(), publishedAt: date.format(now, 'MM/DD/YYYY'), modifiedAt: date.format(now, 'MM/DD/YYYY')};
-
+//GET POR ID ✅
+   articlesRouter.get("/:id", async (req, res) => {
+    const { id } = req.params;
     try {
-      const isArticleValid = await validateArticles(newArticle);
-
-      if(isArticleValid === true) {
-        const validArticles = await readFiles(path.resolve(__dirname, '../database/db.json'));
-        validArticles.push(newArticle);
-
-        await writeData(path.resolve(__dirname, '../database/db.json'), validArticles);
-        res.status(201).send(newArticle);
-
-      } else {
-        const invalidArticles = await readFiles(path.resolve(__dirname, '../database/invalid.json'))
-        invalidArticles.push(newArticle);
-
-         await writeData(path.resolve(__dirname, '../database/invalid.json'), invalidArticles);
-         res.status(400).send(`Bad request: ${isArticleValid}`);
-
-        }
-    } catch (err) {
-      res.status(500).json(err);
-      console.log(err)
-    }
-  }) 
-
-   //PUT 
-   articlesRouter.put('/:id', async (req, res) => {
-    const id= req.params.id; 
-    const { url, keywords, source, readMins, author, title } = req.body;
-    const data = await readFiles(path.resolve(__dirname, '../database/db.json')); 
-    const founded = data.find((e) => e.id === id);
-
-  if(!founded) {
-
-    const newArticle = {
-      ...req.body,
-      id: uuidv4(),
-      modifiedAt: date.format(now, 'MM/DD/YYYY'),
-      publishedAt: date.format(now, 'MM/DD/YYYY'),
-    }
-    try {
-      const isArticleValid = await validateArticles(newArticle);
-      if(isArticleValid === true) {
-        data.push(newArticle);
-        await writeData(path.resolve(__dirname, '../database/db.json'), data);
-        res.status(201).send(`Got a PUT request at /${id}`);
+      const founded = await articleModel.get(id);
+      if(founded === null) {
+        res.status(404).send('Not found');
         return;
       }
-      res.status(400).send(`Bad request: ${isArticleValid}`);
+      console.log("Article founded ", founded);
+      res.status(200).json(founded);
+      return;
+    }
+    catch (err) {
+      console.log("Error: ", err);
+      res.status(500).send('Internal server error');
+    }
+  });
 
-    } catch (err) {
-      res.status(500).json(err);
-      console.log(err)
-    }
-  }
-  else {
-    const newArticle = {
-      ...founded,
-      ...req.body,
-      modifiedAt: date.format(now, 'MM/DD/YYYY'),
-    }
+// POST ✅
+  articlesRouter.post("/", async (req, res) => {
+    const data = req.body;
   
-    try {
-      const isArticleValid = await validateArticles(newArticle);
-      if(isArticleValid === true) {
-        newValues(req, founded)
-        await writeData(path.resolve(__dirname, '../database/db.json'), data);
-        res.status(200).send(`Got a PUT request at /${id}`);
-        return;
-      }
-      res.status(400).send(`Bad request: ${isArticleValid}`);
-
-    } catch (err) {
-      res.status(500).json(err);
-      console.log(err)
-    }
-  }
-  })
-
-  //PATCH 
-  articlesRouter.patch('/:id', async (req, res) => {
-  const id= req.params.id; 
-  const data = await readFiles(path.resolve(__dirname, '../database/db.json')); 
-  const founded = data.find((e) => e.id === id);
-console.log(founded, 'founded')
-  if(!founded) {
-    res.status(404).send('Not found');
-    return;
-  }
-  
-  const newArticle = {
-    ...founded,
-    ...req.body,
-    modifiedAt: date.format(now, 'MM/DD/YYYY')
-  }
-
-  try {
-    const isArticleValid = await validateArticles(newArticle);
-    if(isArticleValid === true) {
-      newValues(req, founded)
-      await writeData(path.resolve(__dirname, '../database/db.json'), data);
-      res.status(200).send('Success');
+    try {
+      const isArticleValid = await validateArticles(data);
+      if(isArticleValid === 'valid') {
+      const article = await articleModel.create(data);
+      console.log("Article created  ", article);
+      res.status(200).send(article);
       return;
     }
     res.status(400).send(`Bad request: ${isArticleValid}`);
 
   } catch (err) {
-    res.status(500).json(err);
-    console.log(err)
-  }
-  })
+      console.log("Error: ", err);
+      res.status(500).send('Internal Server Error');
+    }
+  });
 
-  // DELETE
-  articlesRouter.delete('/:id', async (req, res) => {
-    const id= req.params.id; 
-    const data = await readFiles(path.resolve(__dirname, '../database/db.json')); 
+  // PATCH ✅
+  articlesRouter.patch("/:id", async (req, res) => { 
+    const { id } = req.params;
+    const data = req.body;
+    try {
+      const isArticleValid = await validateArticles(data);
+      const ifItExists = await articleModel.get(id);
 
-    const founded = data.find((e) => e.id === id);
-    if (!founded) res.status(404).send('Not found');
+      const newArticle = {
+        ...data,
+        modifiedAt: date.format(now, 'MM/DD/YYYY')
+      }
+      
+      if(isArticleValid != 'valid') {
+     res.status(400).send(`Bad request: ${isArticleValid}`);
+        return;
+      }
+      if(ifItExists === null) {
+        res.status(404).send("Not found");
+        return;
+        }
+        const article = await articleModel.update(id, newArticle);
+        console.log("Article updated ", article);
+        res.status(200).send(article);
+        return;
+    } catch (err) {
+      console.log("Error: ", err.message);
+      res.status(500).send('Internal Server Error');
+    }
+  });
 
-    const foundIndex = data.indexOf(founded);
-    data.splice(foundIndex, 1);
-    await writeData(path.resolve(__dirname, '../database/db.json'), data);
-    res.status(200).send(`Got a DELETE request at /${id}`);
-    
-  })
+  // PUT ✅
+  articlesRouter.put("/:id", async (req, res) => { 
+    const { id } = req.params;
+    const data = req.body;
+    try {
+      const isArticleValid = await validateArticles(data);
+      const ifItExists = await articleModel.get(id);
+
+      const newArticle = {
+        ...data,
+        modifiedAt: date.format(now, 'MM/DD/YYYY')
+      }
+
+      if(isArticleValid != 'valid') {
+        res.status(400).send(`Bad request: ${isArticleValid}`);
+        return;
+      }
+      if(ifItExists === null) {
+        const article = await articleModel.create(newArticle);
+        console.log("Article created ", article);
+        res.status(201).send(article);
+        return;
+        }
+        const article = await articleModel.update(id, newArticle);
+        console.log("Article updated ", article);
+        res.status(200).send(article);
+        return;
+    } catch (err) {
+      console.log("Error: ", err.message);
+      res.status(404).send("Not found");
+    }
+  });
+
+   // DELETE  ✅
+   articlesRouter.delete("/:id", async (req, res) => {
+    const { id } = req.params;
+  
+      try {
+        const article = await articleModel.remove(id);
+        res.status(200).send(article);
+  
+      } catch (err) {
+        console.log("Error", err);
+        res.status(404).send("Not found");
+      }
+    });
 
    module.exports = articlesRouter;

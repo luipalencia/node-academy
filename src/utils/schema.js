@@ -2,10 +2,10 @@ const yup = require("yup");
 const now = new Date();
 
 let schema = yup.object().shape({
-    id: yup.string().length(36).required(),
+    _id: yup.string().length(24),
     title: yup.string().max(255).required(),
     author: yup.string().max(100).strict().required(),
-    modifiedAt: yup.date().max(now).required(),
+    modifiedAt: yup.date().max(now),
     publishedAt: yup.date().max(now).nullable(),
     url: yup.string().url().when("publishedAt", {
        is: (publishedAt) => !publishedAt,

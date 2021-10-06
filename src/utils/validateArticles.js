@@ -3,7 +3,7 @@ const schema = require('./schema.js');
 const validateArticles = async (article) => {
    try {
     await schema.validate(article);
-    return true; 
+    return 'valid'; 
    } catch (err) {
     return err.errors;
    }
