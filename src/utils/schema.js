@@ -1,7 +1,7 @@
 const yup = require("yup");
 const now = new Date();
 
-let schema = yup.object().shape({
+let articleSchema = yup.object().shape({
     _id: yup.string().length(24),
     title: yup.string().max(255).required(),
     author: yup.string().max(100).strict().required(),
@@ -16,4 +16,10 @@ let schema = yup.object().shape({
     source: yup.mixed().oneOf(['BLOG', 'ARTICLE', 'NEWSPAPER', 'TWEET']).required(),
   });
 
-module.exports = schema; 
+  let authorSchema = yup.object().shape({
+    _id: yup.string().length(24),
+    name: yup.string().required(),
+    articles: yup.array(),
+  });
+
+module.exports = {articleSchema, authorSchema}; 

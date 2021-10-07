@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const articlesRouter = Router();
 const articleModel = require("../database/articles");
-const validateArticles = require('../utils/validateArticles');
+const validateArticles = require('../utils/validator');
 const date = require('date-and-time');
 const now = new Date();
 
@@ -23,7 +23,7 @@ const now = new Date();
      }
   });
 
-//GET POR ID ✅
+//GET BY ID ✅
    articlesRouter.get("/:id", async (req, res) => {
     const { id } = req.params;
     try {
@@ -122,7 +122,7 @@ const now = new Date();
         return;
     } catch (err) {
       console.log("Error: ", err.message);
-      res.status(404).send("Not found");
+      res.status(500).send("Internal server error");
     }
   });
 
