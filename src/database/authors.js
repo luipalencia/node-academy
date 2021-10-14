@@ -8,11 +8,11 @@ const AuthorModelSchema = new Schema({
     name: String,
     articles: [String]
   });
-  
+
   const AuthorModel = mongoose.model("AuthorModel", AuthorModelSchema);
 
   class Author {
-    create(data) {
+    createAuth(data) {
       const model = new AuthorModel(data);
       return new Promise((resolve, reject) => {
         return model.save((err, data) => {
@@ -23,10 +23,21 @@ const AuthorModelSchema = new Schema({
         });
       });
     }
-  
+
     get(id) {
       return new Promise((resolve, reject) => {
         return AuthorModel.findById(id, (err, data) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve(data);
+        });
+      });
+    }
+
+    getByName(name) {
+      return new Promise((resolve, reject) => {
+        return AuthorModel.findOne({ name }, (err, data) => {
           if (err) {
             return reject(err);
           }
@@ -63,12 +74,12 @@ const AuthorModelSchema = new Schema({
           if (err) {
             return reject(err);
           }
-          return resolve(console.log(data));
+          return resolve(data);
         });
       });
     }
 
 
   }
-  
+
   module.exports = new Author();

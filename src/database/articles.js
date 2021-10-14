@@ -13,7 +13,7 @@ const ArticleModelSchema = new Schema({
     readMins: Number,
     source: String,
   });
-  
+
   const ArticleModel = mongoose.model("ArticleModel", ArticleModelSchema);
 
   class Article {
@@ -28,7 +28,7 @@ const ArticleModelSchema = new Schema({
         });
       });
     }
-  
+
     get(id) {
       return new Promise((resolve, reject) => {
         return ArticleModel.findById(id, (err, data) => {
@@ -68,12 +68,10 @@ const ArticleModelSchema = new Schema({
           if (err) {
             return reject(err);
           }
-          return resolve(console.log('Removed Article: ', data));
+          return resolve(data);
         });
       });
     }
-
-
   }
-  
+
   module.exports = new Article();
