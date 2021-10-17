@@ -4,7 +4,7 @@
   "description": "iteracion uno - leer y validar un archivo",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --coverage",
     "dev": "nodemon ./src/main.js"
   },
   "repository": {
@@ -37,6 +37,8 @@
     "yup": "^0.32.9"
   },
   "devDependencies": {
+    "jest": "^27.2.5",
+    "mockingoose": "^2.15.2",
     "nodemon": "^2.0.13"
   }
 }
