@@ -46,13 +46,13 @@ class ArticlesService {
 
     async updateArticle(id, data) {
         const newArticle = {
-            ...data, 
-            modifiedAt: date.format(now, 'MM/DD/YYYY') 
+            ...data,
+            modifiedAt: date.format(now, 'MM/DD/YYYY')
         }
         const isArticleValid = await validateArticles(newArticle);
         if (isArticleValid === 'valid') {
-         await this.articlesDB.update(id, newArticle);
-         return 'validatedArticle';
+            await this.articlesDB.update(id, newArticle);
+            return 'validatedArticle';
         }
         return `${isArticleValid}`;
     }
