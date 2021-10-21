@@ -31,10 +31,10 @@ class AuthorsService {
     async updateAuthor(id, data) {
         const isAuthorValid = await validateAuthors(data);
         if (isAuthorValid === 'valid') {
-         await this.authorsDB.update(id, data);
+            await this.authorsDB.update(id, data);
             return 'validatedAuthor';
-           }
-           return `${isAuthorValid}`;
+        }
+        return `${isAuthorValid}`;
     }
 
     async deleteAuthor(id) {
@@ -45,7 +45,7 @@ class AuthorsService {
         article.forEach(element => arrayOfArticles.push(element._id.valueOf()));
         const founded = arrayOfArticles.filter((e) => articles.includes(e));
         founded.forEach(async element => await this.articlesDB.remove(element.toString()));
-      return await this.authorsDB.remove(id);
+        return await this.authorsDB.remove(id);
     }
 }
 

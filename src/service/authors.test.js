@@ -29,24 +29,42 @@ describe('authors use cases', () => {
         const response = await service.getAuthorById({ params: { id: "6166ce9d316d6e650ace08f4" } })
         expect(JSON.parse(JSON.stringify(response))).toMatchObject(_doc)
     })
+    it("should return error for getAuthor", async () => {
+        mockingoose(model).toReturn(new Error('My Error'), "findOne")
+        await service.getAuthorById({ params: { id: "61687d7481f80db4017da76e" } }).catch(err => {
+            expect(err.message).toBe('My Error');
+        })
+    })
     it("should return not found", async () => {
         mockingoose(model).toReturn(null, "findOne")
         const response = await service.getAuthorById({ params: { id: "61687d7481f80db4017da76e" } })
         expect(response).toBe(null)
     })
     it("should return all the _docs", async () => {
-        const response = await service.listAuthors({})
+        const response = await service.listAuthors()
         expect(JSON.parse(JSON.stringify(response))).toStrictEqual(_doc)
+    })
+    it("should return error for list method", async () => {
+        mockingoose(model).toReturn(new Error('My Error'), "find")
+        await service.listAuthors().catch(err => {
+            expect(err.message).toBe('My Error');
+        })
     })
     it("should return not found for all the _docs", async () => {
         mockingoose(model).toReturn(null, "find")
-        const response = await service.listAuthors({})
+        const response = await service.listAuthors()
         expect(response).toBe(null)
     });
     it('should return the new author object', async () => {
         const response = await service.createAuthor(_doc);
         expect(JSON.parse(JSON.stringify(response))).toBe('validatedAuthor');
     });
+    it("should return error for create method", async () => {
+        mockingoose(model).toReturn(new Error('My Error'), "save")
+        await service.createAuthor(_doc).catch(err => {
+            expect(err.message).toBe('My Error');
+        })
+    })
     it('should return the required field to create the new author', async () => {
         const response = await service.createAuthor(_doc_error);
         expect(JSON.parse(JSON.stringify(response))).toContain('is a required field');
@@ -62,6 +80,12 @@ describe('authors use cases', () => {
         const response = await service.updateAuthor(_doc._id, _doc)
         expect(JSON.parse(JSON.stringify(response))).toBe('validatedAuthor');
     });
+    it("should return error for update method", async () => {
+        mockingoose(model).toReturn(new Error('My Error'), "findOneAndUpdate")
+        await service.updateAuthor(_doc._id, _doc).catch(err => {
+            expect(err.message).toBe('My Error');
+        })
+    })
     it('should return the require field to do validation process', async () => {
         const response = await service.updateAuthor(_doc_error._id, _doc_error)
         expect(JSON.parse(JSON.stringify(response))).toContain('is a required field');
@@ -103,4 +127,10 @@ describe('authors use cases', () => {
         const response = await service.deleteAuthor(_doc._id);
         expect(JSON.parse(JSON.stringify(response))).toStrictEqual(_doc);
     });
+    it("should return error for delete method", async () => {
+        mockingoose(model).toReturn(new Error('My Error'), "findOneAndRemove")
+        await service.deleteAuthor(_doc._id).catch(err => {
+            expect(err.message).toBe('My Error');
+        })
+    })
 })
